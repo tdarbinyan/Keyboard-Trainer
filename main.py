@@ -2,13 +2,29 @@ import tkinter as tk
 import time
 import threading
 import random
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
+class ImageShow:
+  def __init__(self):
+    self.root = tk.Tk()
+    self.root.title("Statistics")
+    self.root.geometry("1000x600")
+    img = tk.PhotoImage(file="plot.png", master=self.root)
+    img_label = tk.Label(self.root, image=img)
+    img_label.place(x=0, y=0)
+    self.root.mainloop()
 
 class TypeSpeedGUI:
+ 
+
 
   def __init__(self):
     self.root = tk.Tk()
     self.root.title("Typing Speed Application")
-    self.root.geometry("800x600")
+    self.root.geometry("1000x600")
 
     self.cps = 0
     self.cpm = 0
@@ -33,10 +49,11 @@ class TypeSpeedGUI:
     self.clear_button = tk.Button(self.frame, text="Clear your statistics", command=self.clear)
     self.clear_button.grid(row = 3, column=0, columnspan=2, padx=5, pady=10)
 
-    self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset)
+    self.reset_button = tk.Button(self.frame, text="Show statistics plot", command=self.plot_float_changes_over_time)
     self.reset_button.grid(row=4, column=0, columnspan=2, padx=5, pady=10)
 
-    
+    self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset)
+    self.reset_button.grid(row=5, column=0, columnspan=2, padx=5, pady=10)
 
     self.frame.pack(expand=True)
 
@@ -91,6 +108,7 @@ class TypeSpeedGUI:
     self.avgs = 0
     self.avgm = 0
     i = 0
+
     while i < length - 1 and i < 10:
         pair = pair_arr[length - i - 2].split(" ")
         print(pair[0])
@@ -98,7 +116,41 @@ class TypeSpeedGUI:
         self.avgs += float(pair[0])
         self.avgm += float(pair[1])
         i += 1
-    self.avgs /= i
-    self.avgm /= i
+
+    if i != 0:
+      self.avgs /= i
+      self.avgm /= i
+
+  def plot_float_changes_over_time(self):
+    # Initialize empty lists to store the data
+    timestamps = []
+    first_float_values = []
+
+    # Read the file and extract data
+    with open("results.txt", 'r') as file:
+        i = 0
+        for line in file:
+            i += 1
+            values = line.strip().split()
+            values[1] = values[0]
+            values[0] = i
+            if len(values) == 2:
+                timestamp, first_float = map(float, values)
+                timestamps.append(timestamp)
+                first_float_values.append(first_float)
+
+    # Create a line plot
+    plt.figure(figsize=(10, 6))  # Set the figure size
+    plt.plot(timestamps, first_float_values, marker='o', linestyle='-')
+    
+    # Add labels and title
+    plt.xlabel('Time')
+    plt.ylabel('First Float Value')
+    plt.title('Changes of the First Float Value Over Time')
+    
+    # Show the plot
+    plt.grid(True)
+    plt.savefig("plot.png")
+    ImageShow()
 
 TypeSpeedGUI()
