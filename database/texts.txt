@@ -1,0 +1,5 @@
+Hello world, this is text number 1 for my python project for training typing
+Hello world, this is text number 2 for my python project for training typing
+Hello world, this is text number 3 for my python project for training typing
+Hello world, this is text number 4 for my python project for training typing
+Hello world, this is text number 5 for my python project for training typing
